@@ -9,9 +9,7 @@ const vk = new (require('vk-io'));
 var fs = require('fs');
 var client = redis.createClient();
 const token = config.vk_token;  
-const osu_api_key = config.osu_api_key;  
-const osuApi_lib = require('./osu_api');
-const osuApi = new osuApi_lib.Api(osu_api_key)
+
 client.on('connect', function() {
     console.log('Redis client connected!');
     vk.setToken(token);
@@ -26,8 +24,6 @@ recognize.balanse(function(price)
 {
     console.log('RuCaptcha Balance: ', price);
 });
-
-
 
 function SendCaptcha(src, callback){
     download(src, 'captcha.png', function(){
@@ -51,27 +47,6 @@ vk.setCaptchaHandler((src,again) => {
         });                         
     });
 });
-
-
-function getMapInfoFromApi(beatmap_id,callback)
-{
-    osuApi.getBeatmap(beatmap_id,function (error, metadata) {
-
-        if (Array.isArray(metadata))
-            metadata = metadata[0];
-
-        if (metadata)
-        {
-            const mapInfo = metadata.artist + ' - ' + metadata.title + ' [' + metadata.version + ']';
-            callback(mapInfo);
-        }
-		else
-		{
-			console.log('Error retrieving beatmap data ' + beatmap_id);
-		}
-    });
-}
-
 
 function uploadPic(path, callback) {
 	request.get("https://api.vk.com/method/photos.getMessagesUploadServer?access_token="+token+"&v=5.64", function (err, res, body)
